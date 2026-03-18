@@ -1,1 +1,1438 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Kit — Portfolio Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   THEME TOKENS
+═══════════════════════════════════════ */
+:root {
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --t: 0.2s;
+  --t-slow: 0.45s;
 
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Geist', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --bg:          #0d0d0f;
+  --bg-1:        #131316;
+  --bg-2:        #18181d;
+  --bg-3:        #1e1e24;
+  --bg-4:        #25252d;
+
+  --line:        rgba(255,255,255,0.07);
+  --line-2:      rgba(255,255,255,0.12);
+
+  --text-1:      #f2f1f5;
+  --text-2:      #9a98a8;
+  --text-3:      #56546a;
+  --text-inv:    #0d0d0f;
+
+  --accent:      #c8f07a;
+  --accent-soft: rgba(200,240,122,0.10);
+  --accent-mid:  rgba(200,240,122,0.20);
+
+  --teal:        #5ee8d0;
+  --teal-soft:   rgba(94,232,208,0.10);
+
+  --rose:        #f87171;
+  --rose-soft:   rgba(248,113,113,0.10);
+
+  --amber:       #f5b94e;
+  --amber-soft:  rgba(245,185,78,0.10);
+
+  --blue:        #7eb8f7;
+  --blue-soft:   rgba(126,184,247,0.10);
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,0.35);
+  --shadow-md:   0 4px 20px rgba(0,0,0,0.45);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,0.55);
+  --glow:        0 0 28px rgba(200,240,122,0.18);
+}
+
+[data-theme="light"] {
+  --bg:          #f8f7f4;
+  --bg-1:        #ffffff;
+  --bg-2:        #f2f1ee;
+  --bg-3:        #e9e8e4;
+  --bg-4:        #dedcda;
+
+  --line:        rgba(0,0,0,0.07);
+  --line-2:      rgba(0,0,0,0.12);
+
+  --text-1:      #1a1a20;
+  --text-2:      #6b6878;
+  --text-3:      #b0aebf;
+  --text-inv:    #f8f7f4;
+
+  --accent:      #4a8c1c;
+  --accent-soft: rgba(74,140,28,0.08);
+  --accent-mid:  rgba(74,140,28,0.16);
+
+  --teal:        #0f7c68;
+  --teal-soft:   rgba(15,124,104,0.08);
+
+  --rose:        #c53030;
+  --rose-soft:   rgba(197,48,48,0.08);
+
+  --amber:       #b45309;
+  --amber-soft:  rgba(180,83,9,0.08);
+
+  --blue:        #2563b0;
+  --blue-soft:   rgba(37,99,176,0.08);
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md:   0 4px 20px rgba(0,0,0,0.10);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,0.12);
+  --glow:        0 0 28px rgba(74,140,28,0.14);
+}
+
+/* ═══════════════════════════════════════
+   BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+  transition: background var(--t-slow) var(--ease), color var(--t-slow) var(--ease);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Subtle background texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 10% 0%, var(--accent-soft) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 90% 100%, var(--teal-soft) 0%, transparent 55%);
+  transition: all var(--t-slow) var(--ease);
+}
+
+/* ═══════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════ */
+.theme-btn {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--t) var(--ease);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-2);
+}
+.theme-btn:hover {
+  background: var(--bg-3);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: rotate(15deg);
+  box-shadow: var(--glow);
+}
+.theme-btn svg { width: 18px; height: 18px; transition: all var(--t) var(--ease); }
+[data-theme="dark"] .icon-sun { display: block; }
+[data-theme="dark"] .icon-moon { display: none; }
+[data-theme="light"] .icon-sun { display: none; }
+[data-theme="light"] .icon-moon { display: block; }
+
+/* ═══════════════════════════════════════
+   SCROLL PROGRESS
+═══════════════════════════════════════ */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 999;
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ═══════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════ */
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 80px 32px 120px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+
+/* ═══════════════════════════════════════
+   HEADER
+═══════════════════════════════════════ */
+.header {
+  padding-bottom: 64px;
+  margin-bottom: 80px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.header-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-eyebrow::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--accent);
+  opacity: 0.6;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 7vw, 72px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  color: var(--text-1);
+  margin-bottom: 20px;
+}
+.header-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.header-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-3);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.header-sub span { display: flex; align-items: center; gap: 6px; }
+.header-sub span::before { content: '—'; opacity: 0.4; }
+
+/* ═══════════════════════════════════════
+   SECTION
+═══════════════════════════════════════ */
+.section { margin-bottom: 80px; }
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.sec-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.sec-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+.sec-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-left: auto;
+}
+
+/* ═══════════════════════════════════════
+   CARD / PANEL
+═══════════════════════════════════════ */
+.panel {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  transition: background var(--t-slow) var(--ease), border-color var(--t-slow) var(--ease);
+}
+.panel + .panel { margin-top: 12px; }
+.panel-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 20px;
+}
+
+/* ═══════════════════════════════════════
+   COLORS
+═══════════════════════════════════════ */
+.swatch-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 68px; max-width: 100px; }
+.swatch-dot {
+  height: 52px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  transition: transform var(--t) var(--ease);
+  cursor: default;
+}
+.swatch-dot:hover { transform: translateY(-3px); }
+.swatch-info { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); line-height: 1.4; }
+
+/* ═══════════════════════════════════════
+   TYPOGRAPHY SAMPLES
+═══════════════════════════════════════ */
+.type-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.type-row:first-child { padding-top: 0; }
+.type-row:last-child { border-bottom: none; padding-bottom: 0; }
+.type-sample { flex: 1; min-width: 0; }
+.type-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-3);
+  text-align: right;
+  white-space: nowrap;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--t) var(--ease);
+  white-space: nowrap;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+  letter-spacing: -0.01em;
+}
+
+/* Sizes */
+.btn-xs  { font-size: 11px; padding: 4px 11px;  border-radius: var(--radius-sm);   }
+.btn-sm  { font-size: 12px; padding: 6px 15px;  border-radius: var(--radius-sm);   }
+.btn-md  { font-size: 13px; padding: 9px 20px;  border-radius: var(--radius-md);   }
+.btn-lg  { font-size: 14px; padding: 12px 26px; border-radius: var(--radius-lg);   }
+.btn-xl  { font-size: 15px; padding: 15px 34px; border-radius: var(--radius-lg);   }
+
+/* Primary */
+.btn-primary {
+  background: var(--accent);
+  color: var(--text-inv);
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: var(--glow), 0 4px 12px rgba(0,0,0,0.15);
+}
+.btn-primary:active { transform: translateY(0); filter: brightness(0.96); }
+
+/* Secondary / Teal */
+.btn-teal {
+  background: var(--teal);
+  color: var(--text-inv);
+  font-weight: 600;
+}
+.btn-teal:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 0 24px rgba(94,232,208,0.25); }
+
+/* Outline */
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--line-2);
+  color: var(--text-1);
+}
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Soft */
+.btn-soft {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent-mid);
+}
+.btn-soft:hover { background: var(--accent-mid); transform: translateY(-1px); }
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+}
+.btn-ghost:hover { background: var(--bg-2); color: var(--text-1); }
+
+/* Surface */
+.btn-surface {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  color: var(--text-1);
+}
+.btn-surface:hover { background: var(--bg-3); border-color: var(--line-2); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+/* Danger */
+.btn-danger {
+  background: var(--rose-soft);
+  border: 1px solid rgba(248,113,113,0.2);
+  color: var(--rose);
+}
+.btn-danger:hover { background: var(--rose); color: var(--text-inv); border-color: var(--rose); transform: translateY(-1px); }
+
+/* Danger solid */
+.btn-danger-solid {
+  background: var(--rose);
+  color: var(--text-inv);
+  font-weight: 600;
+}
+.btn-danger-solid:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 0 20px rgba(248,113,113,0.3); }
+
+/* Pill */
+.btn-pill { border-radius: var(--radius-full) !important; }
+
+/* Icon */
+.btn-icon { border-radius: var(--radius-md); padding: 0; }
+.btn-icon.btn-sm  { width: 30px; height: 30px; }
+.btn-icon.btn-md  { width: 38px; height: 38px; }
+.btn-icon.btn-lg  { width: 46px; height: 46px; }
+
+/* States */
+.btn-loading { pointer-events: none; opacity: 0.65; }
+.btn-loading::after {
+  content: '';
+  width: 13px; height: 13px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn:disabled, .btn-disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+/* ═══════════════════════════════════════
+   INPUTS
+═══════════════════════════════════════ */
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+}
+.err-msg  { font-family: var(--font-mono); font-size: 10px; color: var(--rose);  display: flex; align-items: center; gap: 5px; }
+.ok-msg   { font-family: var(--font-mono); font-size: 10px; color: var(--teal); }
+
+.input {
+  width: 100%;
+  background: var(--bg-1);
+  border: 1px solid var(--line-2);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: all var(--t) var(--ease);
+}
+.input::placeholder { color: var(--text-3); }
+.input:hover:not(:disabled) { border-color: rgba(var(--text-1-raw, 255,255,255), 0.18); }
+.input:focus {
+  border-color: var(--accent);
+  background: var(--bg-2);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Input sizes */
+.input-sm { padding: 6px 10px;  border-radius: var(--radius-sm); font-size: 12px; }
+.input-md { padding: 9px 13px;  border-radius: var(--radius-md); }
+.input-lg { padding: 12px 15px; border-radius: var(--radius-lg); font-size: 14px; }
+
+/* Input states */
+.input-err { border-color: var(--rose) !important; }
+.input-err:focus { box-shadow: 0 0 0 3px var(--rose-soft) !important; }
+.input-ok  { border-color: var(--teal) !important; }
+.input-ok:focus  { box-shadow: 0 0 0 3px var(--teal-soft) !important; }
+.input:disabled  { opacity: 0.35; cursor: not-allowed; background: var(--bg-2); }
+
+/* With icon */
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap .icon-l { position: absolute; left: 11px;  color: var(--text-3); pointer-events: none; display: flex; }
+.input-wrap .icon-r { position: absolute; right: 11px; color: var(--text-3); cursor: pointer; display: flex; transition: color var(--t) var(--ease); }
+.input-wrap .icon-r:hover { color: var(--accent); }
+.has-l .input { padding-left: 36px; }
+.has-r .input { padding-right: 36px; }
+
+/* Textarea */
+textarea.input { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+/* Select */
+select.input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6878' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* Addon group */
+.addon-group { display: flex; }
+.addon-group .input { flex: 1; border-radius: 0; }
+.addon-group .input:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.addon-group .input:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+.addon {
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  transition: all var(--t) var(--ease);
+}
+.addon-l { border-radius: var(--radius-md) 0 0 var(--radius-md); border-right: none; }
+.addon-r { border-radius: 0 var(--radius-md) var(--radius-md) 0; border-left: none; }
+.addon-btn {
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--text-inv);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+}
+.addon-btn:hover { filter: brightness(1.08); }
+
+/* Checkbox / Radio */
+.check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.check {
+  width: 17px; height: 17px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-1);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all var(--t) var(--ease);
+}
+.check[type="radio"] { border-radius: 50%; }
+.check:checked { background: var(--accent); border-color: var(--accent); }
+.check[type="radio"]:checked { background: var(--teal); border-color: var(--teal); }
+.check:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+}
+.check[type="checkbox"]:checked::after {
+  width: 4px; height: 8px;
+  border: 1.5px solid var(--text-inv);
+  border-top: none; border-left: none;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+.check[type="radio"]:checked::after {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-inv);
+  transform: translate(-50%, -50%);
+}
+.check:hover:not(:checked) { border-color: var(--accent); }
+.check-label { font-size: 13px; color: var(--text-2); cursor: pointer; transition: color var(--t) var(--ease); }
+.check-item:hover .check-label { color: var(--text-1); }
+
+/* Toggle */
+.toggle-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+.toggle input { display: none; }
+.t-track {
+  position: absolute; inset: 0;
+  background: var(--bg-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--t) var(--ease);
+}
+.t-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  background: var(--text-3);
+  border-radius: 50%;
+  transition: all var(--t) var(--ease);
+  pointer-events: none;
+}
+.toggle input:checked ~ .t-track { background: var(--accent); border-color: var(--accent); }
+.toggle input:checked ~ .t-track .t-thumb { transform: translateX(18px); background: var(--text-inv); }
+.toggle-lbl { font-size: 13px; color: var(--text-2); cursor: pointer; transition: color var(--t) var(--ease); }
+.toggle-row:hover .toggle-lbl { color: var(--text-1); }
+
+/* Range */
+.range {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 3px;
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 6px var(--accent-mid);
+  transition: transform var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.range::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: var(--glow); }
+.range::-moz-range-thumb { width: 17px; height: 17px; border-radius: 50%; background: var(--accent); border: none; }
+
+/* ═══════════════════════════════════════
+   BADGES
+═══════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  transition: all var(--t) var(--ease);
+}
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.badge-green  { background: var(--accent-soft);  color: var(--accent);  border: 1px solid var(--accent-mid); }
+.badge-teal   { background: var(--teal-soft);    color: var(--teal);   border: 1px solid rgba(94,232,208,0.2); }
+.badge-rose   { background: var(--rose-soft);    color: var(--rose);   border: 1px solid rgba(248,113,113,0.2); }
+.badge-amber  { background: var(--amber-soft);   color: var(--amber);  border: 1px solid rgba(245,185,78,0.2); }
+.badge-blue   { background: var(--blue-soft);    color: var(--blue);   border: 1px solid rgba(126,184,247,0.2); }
+.badge-muted  { background: var(--bg-2);         color: var(--text-3); border: 1px solid var(--line); }
+
+/* ═══════════════════════════════════════
+   CARDS
+═══════════════════════════════════════ */
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  transition: all var(--t-slow) var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-2), transparent);
+}
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-2); }
+.card-accent:hover { border-color: var(--accent-mid); box-shadow: 0 8px 36px var(--accent-soft); }
+.card-teal:hover   { border-color: rgba(94,232,208,0.2); box-shadow: 0 8px 36px var(--teal-soft); }
+.card-title { font-family: var(--font-display); font-size: 16px; font-weight: 400; margin-bottom: 6px; color: var(--text-1); }
+.card-body  { font-size: 12px; color: var(--text-2); line-height: 1.65; }
+
+/* ═══════════════════════════════════════
+   ALERTS
+═══════════════════════════════════════ */
+.alert {
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.55;
+  border: 1px solid;
+}
+.alert-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.alert-title { font-weight: 600; font-size: 12px; margin-bottom: 1px; }
+.alert-green  { background: var(--accent-soft);  border-color: var(--accent-mid);            color: var(--accent); }
+.alert-teal   { background: var(--teal-soft);    border-color: rgba(94,232,208,0.2);          color: var(--teal); }
+.alert-rose   { background: var(--rose-soft);    border-color: rgba(248,113,113,0.2);         color: var(--rose); }
+.alert-amber  { background: var(--amber-soft);   border-color: rgba(245,185,78,0.2);          color: var(--amber); }
+
+/* ═══════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════ */
+.prog-wrap { display: flex; flex-direction: column; gap: 5px; }
+.prog-head { display: flex; justify-content: space-between; }
+.prog-lbl  { font-family: var(--font-mono); font-size: 10px; color: var(--text-2); }
+.prog-val  { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+.prog-track {
+  height: 4px; background: var(--bg-3); border-radius: var(--radius-full); overflow: hidden;
+}
+.prog-bar {
+  height: 100%; border-radius: var(--radius-full);
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; overflow: hidden;
+}
+.prog-bar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+  animation: shim 2.5s ease-in-out infinite;
+}
+@keyframes shim { 0%,100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
+.pb-green  { background: linear-gradient(90deg, var(--accent), #a8e050); }
+.pb-teal   { background: linear-gradient(90deg, var(--teal), #8ef5e4); }
+.pb-rose   { background: linear-gradient(90deg, var(--rose), #fca5a5); }
+.pb-blue   { background: linear-gradient(90deg, var(--blue), #a5c8fa); }
+.prog-track.h2 { height: 2px; }
+.prog-track.h6 { height: 6px; }
+.prog-track.h8 { height: 8px; }
+
+/* ═══════════════════════════════════════
+   AVATARS
+═══════════════════════════════════════ */
+.avatar {
+  border-radius: 50%;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: var(--text-2);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--t) var(--ease);
+}
+.avatar:hover { border-color: var(--accent); transform: scale(1.05); }
+.av-xs { width: 26px; height: 26px; font-size: 10px; }
+.av-sm { width: 34px; height: 34px; font-size: 12px; }
+.av-md { width: 46px; height: 46px; font-size: 16px; }
+.av-lg { width: 60px; height: 60px; font-size: 20px; }
+.av-green  { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-mid); }
+.av-teal   { background: var(--teal-soft);   color: var(--teal);   border-color: rgba(94,232,208,0.2); }
+.av-rose   { background: var(--rose-soft);   color: var(--rose);   border-color: rgba(248,113,113,0.2); }
+
+.av-stack { display: flex; }
+.av-stack .avatar { margin-left: -8px; border: 2px solid var(--bg); }
+.av-stack .avatar:first-child { margin-left: 0; }
+
+/* ═══════════════════════════════════════
+   DIVIDER
+═══════════════════════════════════════ */
+.divider { height: 1px; background: var(--line); }
+.divider-label {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--text-3); font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.divider-label::before, .divider-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+
+/* ═══════════════════════════════════════
+   TOOLTIP
+═══════════════════════════════════════ */
+.tip { position: relative; display: inline-flex; }
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%; transform: translateX(-50%) translateY(4px);
+  background: var(--bg-4);
+  border: 1px solid var(--line-2);
+  color: var(--text-1);
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 4px 9px; border-radius: var(--radius-sm);
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: all var(--t) var(--ease);
+  z-index: 100; box-shadow: var(--shadow-sm);
+}
+.tip:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════
+   CODE TOKEN
+═══════════════════════════════════════ */
+.token {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  color: var(--accent); padding: 2px 7px; border-radius: var(--radius-xs);
+}
+
+/* ═══════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════ */
+.flex   { display: flex; }
+.fwrap  { display: flex; flex-wrap: wrap; }
+.g6     { gap: 6px; }
+.g8     { gap: 8px; }
+.g10    { gap: 10px; }
+.g12    { gap: 12px; }
+.g14    { gap: 14px; }
+.g16    { gap: 16px; }
+.g20    { gap: 20px; }
+.g24    { gap: 24px; }
+.ai-c   { align-items: center; }
+.ai-s   { align-items: flex-start; }
+.col    { flex-direction: column; }
+.grid2  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.mb8    { margin-bottom: 8px; }
+.mb12   { margin-bottom: 12px; }
+.mb16   { margin-bottom: 16px; }
+.mb20   { margin-bottom: 20px; }
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 640px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .wrap { padding: 64px 20px 80px; }
+  .header-title { font-size: 40px; }
+}
+
+/* Smooth theme transition for all elements */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.35s;
+  transition-timing-function: cubic-bezier(0.4,0,0.2,1);
+}
+.btn, .input, .range, .check, .t-track, .t-thumb, .swatch-dot,
+.avatar, .card, .badge, .alert, .prog-bar, .theme-btn {
+  transition: all var(--t) var(--ease);
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="scroll-progress" id="scrollBar"></div>
+
+<!-- Theme toggle -->
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="header reveal">
+    <div class="header-eyebrow">Design System</div>
+    <h1 class="header-title">Portfolio<br><em>UI Kit</em></h1>
+    <div class="header-sub">
+      <span>v1.0</span>
+      <span>Dark &amp; Light</span>
+      <span>Component Library</span>
+    </div>
+  </header>
+
+  <!-- ─── 01 COLORS ─── -->
+  <section class="section">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-num">01</div>
+        <h2 class="sec-title">Color Tokens</h2>
+      </div>
+      <span class="sec-tag">tokens / color</span>
+    </div>
+
+    <div class="panel reveal reveal-delay-1">
+      <div class="panel-label">Backgrounds</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-dot" style="background:var(--bg)"></div><div class="swatch-info">bg<br>base</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--bg-1)"></div><div class="swatch-info">bg-1<br>surface</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--bg-2)"></div><div class="swatch-info">bg-2<br>elevated</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--bg-3)"></div><div class="swatch-info">bg-3<br>overlay</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--bg-4)"></div><div class="swatch-info">bg-4<br>hover</div></div>
+      </div>
+    </div>
+
+    <div class="panel reveal reveal-delay-2">
+      <div class="panel-label">Accent Palette</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-dot" style="background:var(--accent)"></div><div class="swatch-info">accent<br>primary</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--teal)"></div><div class="swatch-info">teal<br>secondary</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--rose)"></div><div class="swatch-info">rose<br>danger</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--amber)"></div><div class="swatch-info">amber<br>warning</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--blue)"></div><div class="swatch-info">blue<br>info</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--text-1)"></div><div class="swatch-info">text-1<br>primary</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--text-2)"></div><div class="swatch-info">text-2<br>secondary</div></div>
+        <div class="swatch"><div class="swatch-dot" style="background:var(--text-3)"></div><div class="swatch-info">text-3<br>tertiary</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 02 TYPOGRAPHY ─── -->
+  <section class="section">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-num">02</div>
+        <h2 class="sec-title">Typography</h2>
+      </div>
+      <span class="sec-tag">tokens / type</span>
+    </div>
+
+    <div class="panel reveal reveal-delay-1">
+      <div class="type-row">
+        <div class="type-sample" style="font-family:var(--font-display);font-size:44px;font-weight:300;letter-spacing:-0.03em;line-height:1;">Display Italic</div>
+        <div class="type-meta">Fraunces 300<br>44px / −0.03em</div>
+      </div>
+      <div class="type-row">
+        <div class="type-sample" style="font-family:var(--font-display);font-size:28px;font-weight:400;letter-spacing:-0.02em;">Heading One</div>
+        <div class="type-meta">Fraunces 400<br>28px</div>
+      </div>
+      <div class="type-row">
+        <div class="type-sample" style="font-family:var(--font-display);font-size:20px;font-weight:400;letter-spacing:-0.01em;">Heading Two</div>
+        <div class="type-meta">Fraunces 400<br>20px</div>
+      </div>
+      <div class="type-row">
+        <div class="type-sample" style="font-family:var(--font-body);font-size:14px;font-weight:500;">Body Medium — Geist 500</div>
+        <div class="type-meta">Geist 500<br>14px</div>
+      </div>
+      <div class="type-row">
+        <div class="type-sample" style="font-size:13px;color:var(--text-2);line-height:1.65;">Body — texto de apoio, descrições e parágrafos com legibilidade refinada em qualquer tema.</div>
+        <div class="type-meta">Geist 400<br>13px / 1.65</div>
+      </div>
+      <div class="type-row">
+        <div class="type-sample" style="font-family:var(--font-mono);font-size:12px;color:var(--accent);">const ui = { clean: true, theme: 'both' }</div>
+        <div class="type-meta">Geist Mono 400<br>12px</div>
+      </div>
+      <div class="type-row">
+        <div class="type-sample" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-3);">LABEL — EYEBROW / CATEGORY</div>
+        <div class="type-meta">Mono 400<br>10px / 0.18em</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 03 BUTTONS ─── -->
+  <section class="section">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-num">03</div>
+        <h2 class="sec-title">Buttons</h2>
+      </div>
+      <span class="sec-tag">components / button</span>
+    </div>
+
+    <div class="panel mb12 reveal reveal-delay-1">
+      <div class="panel-label mb16">Style Variants</div>
+      <div class="fwrap g10">
+        <button class="btn btn-primary btn-md">Primary</button>
+        <button class="btn btn-teal btn-md">Teal</button>
+        <button class="btn btn-soft btn-md">Soft</button>
+        <button class="btn btn-outline btn-md">Outline</button>
+        <button class="btn btn-ghost btn-md">Ghost</button>
+        <button class="btn btn-surface btn-md">Surface</button>
+        <button class="btn btn-danger btn-md">Danger</button>
+        <button class="btn btn-danger-solid btn-md">Danger Solid</button>
+      </div>
+    </div>
+
+    <div class="panel mb12 reveal reveal-delay-2">
+      <div class="panel-label mb16">Sizes</div>
+      <div class="fwrap g10 ai-c">
+        <button class="btn btn-primary btn-xs">XSmall</button>
+        <button class="btn btn-primary btn-sm">Small</button>
+        <button class="btn btn-primary btn-md">Medium</button>
+        <button class="btn btn-primary btn-lg">Large</button>
+        <button class="btn btn-primary btn-xl">XLarge</button>
+      </div>
+    </div>
+
+    <div class="panel reveal reveal-delay-3">
+      <div class="panel-label mb16">Special States</div>
+      <div class="fwrap g10 ai-c">
+        <button class="btn btn-primary btn-md btn-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Pill + Icon
+        </button>
+        <button class="btn btn-outline btn-md btn-pill">Pill Outline</button>
+        <button class="btn btn-surface btn-md">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          New Item
+        </button>
+        <button class="btn btn-soft btn-md btn-loading">Loading</button>
+        <button class="btn btn-primary btn-md btn-disabled">Disabled</button>
+        <button class="btn btn-outline btn-md btn-disabled">Disabled</button>
+        <div class="tip" data-tip="Settings">
+          <button class="btn btn-icon btn-surface btn-md">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+        <div class="tip" data-tip="Add new">
+          <button class="btn btn-icon btn-primary btn-md">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <div class="tip" data-tip="Delete">
+          <button class="btn btn-icon btn-danger btn-md">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 04 INPUTS ─── -->
+  <section class="section">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-num">04</div>
+        <h2 class="sec-title">Inputs</h2>
+      </div>
+      <span class="sec-tag">components / input</span>
+    </div>
+
+    <!-- Sizes + States -->
+    <div class="grid2 mb12">
+      <div class="flex col g12 reveal reveal-delay-1">
+        <div class="field">
+          <label class="label">Small</label>
+          <input class="input input-sm" type="text" placeholder="Small input…">
+        </div>
+        <div class="field">
+          <label class="label">Medium</label>
+          <input class="input input-md" type="text" placeholder="Medium input…">
+          <span class="hint">// helper text</span>
+        </div>
+        <div class="field">
+          <label class="label">Large</label>
+          <input class="input input-lg" type="text" placeholder="Large input…">
+        </div>
+      </div>
+      <div class="flex col g12 reveal reveal-delay-2">
+        <div class="field">
+          <label class="label">Error</label>
+          <input class="input input-md input-err" type="text" value="Invalid value">
+          <span class="err-msg">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Campo obrigatório
+          </span>
+        </div>
+        <div class="field">
+          <label class="label">Success</label>
+          <input class="input input-md input-ok" type="text" value="Valid value ✓">
+          <span class="ok-msg">// looks good!</span>
+        </div>
+        <div class="field">
+          <label class="label">Disabled</label>
+          <input class="input input-md" type="text" placeholder="Disabled…" disabled>
+        </div>
+      </div>
+    </div>
+
+    <!-- With icons + addons -->
+    <div class="panel mb12 reveal reveal-delay-1">
+      <div class="panel-label mb16">Icons & Addons</div>
+      <div class="grid2">
+        <div class="field">
+          <label class="label">Search</label>
+          <div class="input-wrap has-l">
+            <span class="icon-l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <input class="input input-md" type="text" placeholder="Search…">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Email</label>
+          <div class="input-wrap has-l has-r">
+            <span class="icon-l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+            <input class="input input-md" type="email" placeholder="you@example.com">
+            <span class="icon-r"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">URL Prefix</label>
+          <div class="addon-group">
+            <div class="addon addon-l">https://</div>
+            <input class="input input-md" type="text" placeholder="yourdomain.com">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">With Action</label>
+          <div class="addon-group">
+            <input class="input input-md" type="text" placeholder="Enter invite code…">
+            <div class="addon addon-r addon-btn">Apply</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Password</label>
+          <div class="input-wrap has-l has-r">
+            <span class="icon-l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <input class="input input-md" type="password" value="password123" id="pwInput">
+            <span class="icon-r" id="pwToggle"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Select</label>
+          <select class="input input-md">
+            <option value="">Choose option…</option>
+            <option>Design System</option>
+            <option>Frontend Dev</option>
+            <option>Backend</option>
+            <option>Full Stack</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Textarea -->
+    <div class="panel mb12 reveal reveal-delay-2">
+      <div class="panel-label mb16">Textarea</div>
+      <div class="field">
+        <label class="label">Message</label>
+        <textarea class="input input-md" placeholder="Write your message…"></textarea>
+        <span class="hint">// max 500 characters</span>
+      </div>
+    </div>
+
+    <!-- Checkbox / Radio / Toggle -->
+    <div class="panel mb12 reveal reveal-delay-1">
+      <div class="panel-label mb16">Checkbox · Radio · Toggle</div>
+      <div class="grid3">
+        <div>
+          <div class="panel-label mb12">Checkbox</div>
+          <div class="flex col g10">
+            <label class="check-item"><input type="checkbox" class="check" checked><span class="check-label">Checked</span></label>
+            <label class="check-item"><input type="checkbox" class="check"><span class="check-label">Unchecked</span></label>
+            <label class="check-item"><input type="checkbox" class="check" disabled><span class="check-label" style="opacity:.35">Disabled</span></label>
+          </div>
+        </div>
+        <div>
+          <div class="panel-label mb12">Radio</div>
+          <div class="flex col g10">
+            <label class="check-item"><input type="radio" class="check" name="rg" checked><span class="check-label">Option A</span></label>
+            <label class="check-item"><input type="radio" class="check" name="rg"><span class="check-label">Option B</span></label>
+            <label class="check-item"><input type="radio" class="check" name="rg"><span class="check-label">Option C</span></label>
+          </div>
+        </div>
+        <div>
+          <div class="panel-label mb12">Toggle</div>
+          <div class="flex col g12">
+            <label class="toggle-row">
+              <div class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></div>
+              <span class="toggle-lbl">Dark mode</span>
+            </label>
+            <label class="toggle-row">
+              <div class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></div>
+              <span class="toggle-lbl">Notifications</span>
+            </label>
+            <label class="toggle-row">
+              <div class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></div>
+              <span class="toggle-lbl">Analytics</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Range -->
+    <div class="panel reveal reveal-delay-2">
+      <div class="panel-label mb16">Range Slider</div>
+      <div class="flex col g20">
+        <div class="field">
+          <div class="flex ai-c" style="justify-content:space-between;margin-bottom:10px;">
+            <span class="label">Opacity</span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-3)" id="r1v">72%</span>
+          </div>
+          <input type="range" class="range" id="r1" value="72">
+        </div>
+        <div class="field">
+          <div class="flex ai-c" style="justify-content:space-between;margin-bottom:10px;">
+            <span class="label">Volume</span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-3)" id="r2v">40%</span>
+          </div>
+          <input type="range" class="range" id="r2" value="40">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 05 BADGES ─── -->
+  <section class="section">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-num">05</div>
+        <h2 class="sec-title">Badges & Tags</h2>
+      </div>
+      <span class="sec-tag">components / badge</span>
+    </div>
+    <div class="panel reveal reveal-delay-1">
+      <div class="fwrap g8">
+        <span class="badge badge-green"><span class="badge-dot" style="background:var(--accent)"></span>Active</span>
+        <span class="badge badge-teal"><span class="badge-dot" style="background:var(--teal)"></span>Online</span>
+        <span class="badge badge-rose"><span class="badge-dot" style="background:var(--rose)"></span>Error</span>
+        <span class="badge badge-amber"><span class="badge-dot" style="background:var(--amber)"></span>Warning</span>
+        <span class="badge badge-blue"><span class="badge-dot" style="background:var(--blue)"></span>Info</span>
+        <span class="badge badge-muted">Inactive</span>
+        <span class="badge badge-green" style="border-radius:var(--radius-xs)">New</span>
+        <span class="badge badge-teal" style="border-radius:var(--radius-xs)">Beta</span>
+        <span class="badge badge-muted" style="border-radius:var(--radius-xs)">v2.1.0</span>
+        <code class="token">--accent</code>
+        <code class="token">--teal</code>
+        <code class="token">--rose</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 06 COMPONENTS ─── -->
+  <section class="section">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-num">06</div>
+        <h2 class="sec-title">Components</h2>
+      </div>
+      <span class="sec-tag">cards · alerts · progress · avatars</span>
+    </div>
+
+    <!-- Cards -->
+    <div class="panel-label reveal" style="margin-bottom:10px;">Cards</div>
+    <div class="grid3 mb20">
+      <div class="card card-accent reveal reveal-delay-1">
+        <div class="mb8"><span class="badge badge-green">New</span></div>
+        <div class="card-title">Design Tokens</div>
+        <div class="card-body">CSS variables para estilo consistente em todos os componentes.</div>
+      </div>
+      <div class="card card-teal reveal reveal-delay-2">
+        <div class="mb8"><span class="badge badge-teal">Beta</span></div>
+        <div class="card-title">Components</div>
+        <div class="card-body">Blocos reutilizáveis prontos para uso em produção.</div>
+      </div>
+      <div class="card reveal reveal-delay-3">
+        <div class="mb8"><span class="badge badge-muted">Docs</span></div>
+        <div class="card-title">Documentation</div>
+        <div class="card-body">Guias e padrões de uso para cada componente do kit.</div>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="panel-label reveal" style="margin-bottom:10px;">Alerts</div>
+    <div class="flex col g8 mb20">
+      <div class="alert alert-green reveal reveal-delay-1">
+        <span class="alert-icon">✦</span>
+        <div><div class="alert-title">Design System Updated</div>Novos tokens disponíveis na v1.1</div>
+      </div>
+      <div class="alert alert-teal reveal reveal-delay-2">
+        <span class="alert-icon">✓</span>
+        <div><div class="alert-title">Deploy Successful</div>Suas mudanças estão agora em produção.</div>
+      </div>
+      <div class="alert alert-amber reveal reveal-delay-3">
+        <span class="alert-icon">△</span>
+        <div><div class="alert-title">Rate Limit</div>80% da sua quota mensal utilizada.</div>
+      </div>
+      <div class="alert alert-rose reveal reveal-delay-4">
+        <span class="alert-icon">✕</span>
+        <div><div class="alert-title">Build Failed</div>Compilation error em src/components/Button.tsx</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="panel-label reveal" style="margin-bottom:10px;">Progress Bars</div>
+    <div class="flex col g14 mb20">
+      <div class="prog-wrap reveal reveal-delay-1">
+        <div class="prog-head"><span class="prog-lbl">TypeScript</span><span class="prog-val">92%</span></div>
+        <div class="prog-track h6"><div class="prog-bar pb-green" style="width:92%"></div></div>
+      </div>
+      <div class="prog-wrap reveal reveal-delay-2">
+        <div class="prog-head"><span class="prog-lbl">React / Next.js</span><span class="prog-val">87%</span></div>
+        <div class="prog-track"><div class="prog-bar pb-teal" style="width:87%"></div></div>
+      </div>
+      <div class="prog-wrap reveal reveal-delay-3">
+        <div class="prog-head"><span class="prog-lbl">Design Systems</span><span class="prog-val">95%</span></div>
+        <div class="prog-track h2"><div class="prog-bar pb-green" style="width:95%"></div></div>
+      </div>
+      <div class="prog-wrap reveal reveal-delay-4">
+        <div class="prog-head"><span class="prog-lbl">Backend / APIs</span><span class="prog-val">64%</span></div>
+        <div class="prog-track h8"><div class="prog-bar pb-rose" style="width:64%"></div></div>
+      </div>
+    </div>
+
+    <!-- Avatars -->
+    <div class="panel-label reveal" style="margin-bottom:10px;">Avatars</div>
+    <div class="fwrap g16 ai-c reveal reveal-delay-1">
+      <div class="avatar av-xs">J</div>
+      <div class="avatar av-sm av-green">AL</div>
+      <div class="avatar av-md av-teal">MK</div>
+      <div class="avatar av-lg av-rose" style="font-size:22px;">★</div>
+      <div style="width:1px;height:48px;background:var(--line);"></div>
+      <div class="av-stack">
+        <div class="avatar av-sm av-green">A</div>
+        <div class="avatar av-sm av-teal">B</div>
+        <div class="avatar av-sm">C</div>
+        <div class="avatar av-sm" style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);">+8</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer reveal">
+    <div class="footer-copy">// Portfolio UI Kit — v1.0.0 — Dark &amp; Light</div>
+    <div class="fwrap g6">
+      <span class="badge badge-muted">Fraunces</span>
+      <span class="badge badge-muted">Geist</span>
+      <span class="badge badge-muted">Geist Mono</span>
+      <span class="badge badge-green">Clean UI</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  /* ── THEME TOGGLE ── */
+  const btn = document.getElementById('themeBtn');
+  const html = document.documentElement;
+
+  btn.addEventListener('click', () => {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    // update range fill after theme switch
+    document.querySelectorAll('.range').forEach(updateRange);
+  });
+
+  /* ── SCROLL PROGRESS BAR ── */
+  const bar = document.getElementById('scrollBar');
+  window.addEventListener('scroll', () => {
+    const max  = document.documentElement.scrollHeight - window.innerHeight;
+    const pct  = (window.scrollY / max) * 100;
+    bar.style.width = pct + '%';
+  }, { passive: true });
+
+  /* ── SCROLL REVEAL ── */
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+
+  reveals.forEach(el => io.observe(el));
+
+  /* ── RANGE SLIDERS ── */
+  function updateRange(r) {
+    const pct = (r.value / r.max) * 100;
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const bg3    = getComputedStyle(document.documentElement).getPropertyValue('--bg-3').trim();
+    r.style.background = `linear-gradient(90deg, ${accent} ${pct}%, ${bg3} ${pct}%)`;
+  }
+
+  const r1 = document.getElementById('r1');
+  const r2 = document.getElementById('r2');
+  const r1v = document.getElementById('r1v');
+  const r2v = document.getElementById('r2v');
+
+  [r1, r2].forEach(r => { updateRange(r); });
+
+  r1.addEventListener('input', () => { updateRange(r1); r1v.textContent = r1.value + '%'; });
+  r2.addEventListener('input', () => { updateRange(r2); r2v.textContent = r2.value + '%'; });
+
+  /* ── PASSWORD TOGGLE ── */
+  const pwInput  = document.getElementById('pwInput');
+  const pwToggle = document.getElementById('pwToggle');
+  if (pwToggle && pwInput) {
+    pwToggle.addEventListener('click', () => {
+      pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+    });
+  }
+</script>
+</body>
+</html>
