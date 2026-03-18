@@ -15,7 +15,7 @@
 |-----------|------------|
 | ![dark](.github/preview-dark.png) | ![light](.github/preview-light.png) |
 
-> **Live demo:** [seu-usuario.github.io/portfolio-ui-kit](https://herbertis.github.io/portfolio-ui-kit/)
+> **Live demo:** [herbertis.github.io/portfolio-ui-kit](https://herbertis.github.io/portfolio-ui-kit/)
 
 ---
 
